@@ -1,0 +1,26 @@
+= MVC 1.0 Example
+
+== Pre requisites:
+
+* Java 8
+* Glassfish 4.1.1 [link:https://glassfish.java.net/download.html[Download]]
+* Maven 3.3.3
+
+== Build
+
+[source,bash]
+---
+./mvnw package
+---
+
+== Deploy
+
+Access to Glassfish Panel Control at http://localhost:4848
+
+== Test
+
+Access to http://localhost:8080/javaee8-mvc
+
+== Content
+
+* Models, Views and Controllers
