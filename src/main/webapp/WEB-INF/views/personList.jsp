@@ -3,6 +3,7 @@
 <head>
 </head>
 <body>
+${messageBean.value}
 <table>
     <tr>
         <td>Name</td>

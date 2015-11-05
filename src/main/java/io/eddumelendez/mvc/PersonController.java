@@ -1,19 +1,23 @@
 package io.eddumelendez.mvc;
 
 import javax.inject.Inject;
-import javax.mvc.Controller;
 import javax.mvc.Models;
-import javax.mvc.View;
-import javax.mvc.Viewable;
+import javax.mvc.annotation.Controller;
+import javax.mvc.annotation.View;
+import javax.mvc.binding.BindingResult;
+import javax.validation.Valid;
+import javax.validation.executable.ExecutableType;
+import javax.validation.executable.ValidateOnExecution;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.StringJoiner;
 
 @Controller
 @Path("book")
@@ -21,6 +25,12 @@ public class PersonController {
 
 	@Inject
 	private Models models;
+
+	@Inject
+	private MessageBean messageBean;
+
+	@Inject
+	private BindingResult bindingResult;
 
 	private static List<Person> people;
 
@@ -37,23 +47,31 @@ public class PersonController {
 
 	@GET
 	@Path("new")
-	public String newPerson() {
-		return "person.jsp";
+	public PersonView newPerson() {
+		return new PersonView("person.jsp");
 	}
 
 	@POST
 	@Path("add")
-	public Viewable add(@BeanParam Person person) {
+	@ValidateOnExecution(type = ExecutableType.NONE)
+	public String add(@Valid @BeanParam Person person) {
+		if (this.bindingResult.isFailed()) {
+			List<String> errorMessages = this.bindingResult.getAllMessages();
+			this.models.put("errors", errorMessages);
+			return "person.jsp";
+		}
+
 		people.add(person);
-		this.models.put("people", people);
-		return new Viewable("personList.jsp");
+		this.messageBean.setValue("Person has been added.");
+		return "redirect:book/list";
 	}
 
 	@GET
 	@Path("delete")
-	public Response delete(@QueryParam("personId") int personId) {
+	public String delete(@QueryParam("personId") int personId) {
 		people.remove(personId);
-		return Response.seeOther(URI.create("book/list")).build();
+		this.messageBean.setValue("Person has been deleted.");
+		return "redirect:book/list";
 	}
 
 }
