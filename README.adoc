@@ -21,6 +21,22 @@ Access to Glassfish Panel Control at http://localhost:4848
 
 Access to http://localhost:8080/javaee8-mvc
 
+== Build with Docker
+
+Build your own docker image.
+
+[source,bash]
+---
+./mvnw package docker:build
+---
+
+Then, execute the command below and application will be running at http://<docker_host>:8080/javaee8-mvc
+
+[source,bash]
+---
+docker run --name mvc-example -p 8080:8080 adoptajsr/javaee8-mvc
+---
+
 == Content
 
 * Models, Views and Controllers
