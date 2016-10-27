@@ -56,20 +56,38 @@
 				</configuration>
 			</plugin>
             <plugin>
-                <groupId>com.spotify</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.13</version>
+                <version>0.16.9</version>
+				<extensions>true</extensions>
                 <configuration>
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                    <dockerDirectory>src/main/docker</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.war</include>
-                        </resource>
-                    </resources>
+					<images>
+						<image>
+							<name>${docker.image.prefix}/${project.artifactId}</name>
+							<build>
+								<dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
+								<assembly>
+									<descriptorRef>artifact</descriptorRef>
+								</assembly>
+								<nocache>true</nocache>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>latest</tag>
+								</tags>
+							</build>
+						</image>
+					</images>
                 </configuration>
+				<executions>
+					<execution>
+						<id>buildImage</id>
+						<phase>package</phase>
+						<goals>
+							<goal>remove</goal>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
             </plugin>
 		</plugins>
 	</build>
